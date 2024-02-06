@@ -1,0 +1,39 @@
+
+
+```{r Simulate}
+set.seed(5)
+
+days <- 100
+mean_pages <- 50
+std_dev_pages <- 15
+
+matt <- round(rnorm(days, mean_pages, std_dev_pages))
+ash <- round(matt + rnorm(days, 0, 5))
+jacki <- round(rnorm(days, mean_pages, std_dev_pages))
+rol <- round(rnorm(days, mean_pages, std_dev_pages))
+mike <- round(rnorm(days, mean_pages, std_dev_pages))
+
+data <- data.frame(Day = 1:days, Matt = matt, Ash = ash, Jacki = jacki, Rol = rol, Mike = mike)
+print(data)
+```
+
+```{r 5 tests}
+
+test_integer <- all(sapply(data[, -1], function(x) all(x == floor(x))))
+print(paste("All student readings are integers:", test_integer))
+
+test_days <- nrow(data) == 100
+print(paste("Each student has 100 days of data:", test_days))
+
+correlation_matt_ash <- cor(data$Matt, data$Ash)
+test_correlation <- correlation_matt_ash > 0
+print(paste("Matt and Ash's readings are positively correlated:", test_correlation))
+
+test_no_missing <- !any(is.na(data))
+print(paste("No missing data in the dataset:", test_no_missing))
+
+test_days_range <- all(data$Day >= 1 & data$Day <= 100)
+print(paste("Day column covers the correct range from 1 to 100:", test_days_range))
+
+```
+
