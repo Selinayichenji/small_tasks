@@ -24,8 +24,8 @@ library(tidyr)
 data_long <- pivot_longer(data, -Day, names_to = "Student", values_to = "Pages")
 
 ggplot(data_long, aes(x = Day, y = Pages, color = Student, group = Student)) +
-  geom_smooth(se = FALSE, method = "loess", aes(color = Student)) + # 为每个学生的平滑线使用不同颜色
-  scale_color_brewer(palette = "Set1") + # 使用预设的颜色方案
+  geom_smooth(se = FALSE, method = "loess", aes(color = Student)) + 
+  scale_color_brewer(palette = "Set1") +
   labs(title = "Daily Pages Read by Each Student Over 100 Days",
        x = "Day",
        y = "Pages Read",
