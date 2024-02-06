@@ -1,0 +1,37 @@
+
+```{r Simulate}
+set.seed(5)
+
+days <- 100
+mean_pages <- 50
+std_dev_pages <- 15
+
+matt <- round(rnorm(days, mean_pages, std_dev_pages))
+ash <- round(matt + rnorm(days, 0, 5))
+jacki <- round(rnorm(days, mean_pages, std_dev_pages))
+rol <- round(rnorm(days, mean_pages, std_dev_pages))
+mike <- round(rnorm(days, mean_pages, std_dev_pages))
+
+data <- data.frame(Day = 1:days, Matt = matt, Ash = ash, Jacki = jacki, Rol = rol, Mike = mike)
+print(data)
+```
+
+
+```{r plot}
+library(ggplot2)
+library(tidyr)
+
+data_long <- pivot_longer(data, -Day, names_to = "Student", values_to = "Pages")
+
+ggplot(data_long, aes(x = Day, y = Pages, color = Student, group = Student)) +
+  geom_smooth(se = FALSE, method = "loess", aes(color = Student)) + # 为每个学生的平滑线使用不同颜色
+  scale_color_brewer(palette = "Set1") + # 使用预设的颜色方案
+  labs(title = "Daily Pages Read by Each Student Over 100 Days",
+       x = "Day",
+       y = "Pages Read",
+       color = "Student") +
+  theme_minimal() +
+  theme(legend.position = "right") 
+
+```
+
