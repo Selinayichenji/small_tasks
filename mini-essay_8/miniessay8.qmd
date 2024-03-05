@@ -1,0 +1,336 @@
+---
+title: "Exploratory data analysis - Airbnb Paris"
+author: Yichen Ji
+date: "`r format(Sys.time(), '%d %B %Y')`"
+thanks: "Code and data are available at: https://github.com/Selinayichenji/small_tasks.git. Please check the folder named mini-essay_8."
+format: pdf
+---
+
+```{r setup}
+#| include: false
+#| warning: false
+#| message: false
+#install.packages("arrow")
+library(arrow)
+library(janitor)
+library(knitr)
+library(lubridate)
+#install.packages("mice")
+library(mice)
+library(modelsummary)
+#install.packages("naniar")
+library(naniar)
+library(opendatatoronto)
+library(tidyverse)
+```
+
+```{r download}
+#| echo: false
+#| warning: false
+#| message: false
+
+url <-
+  (paste0("http://data.insideairbnb.com/france/ile-de-france/paris/2023-12-12/data/listings.csv.gz"))
+airbnb_paris <- read_csv(file = url,
+                         guess_max = 20000)
+write_csv(airbnb_paris, "airbnb_paris.csv")
+
+airbnb_data_selected <-
+  airbnb_paris %>%
+  select(
+    host_id,
+    host_response_time,
+    host_is_superhost,
+    host_total_listings_count,
+    neighbourhood_cleansed,
+    bathrooms,
+    bedrooms,
+    price,
+    number_of_reviews,
+    review_scores_rating,
+    review_scores_accuracy,
+    review_scores_value
+  )
+
+write_parquet(
+  x = airbnb_data_selected, 
+  sink = 
+    "2023-12-12-paris-airbnblistings-select_variables.parquet"
+  )
+
+rm(airbnb_paris)
+```
+
+In this essay, we will do the exploratory data analysis on the data of Airbnb in Paris collected at 12th December in 2023.At first, we need to download Paris's data from Airbnb official website, and store it on parquet form. After that, we can start to clean data. The character represents money and comma between numbers are deleted.
+
+## Variables
+There are 12 variables in our cleaned data.
+
+- host_id
+- host_response_time
+- host_is_superhost
+- host_total_listings_count
+- neighbourhood_cleansed
+- bathrooms
+- bedrooms
+- price
+- number_of_reviews
+- review_scores_rating
+- review_scores_accuracy
+- review_scores_value
+  
+   The host_response_time variable includes 3 choices: "within a few hours", "within an hour" and 	"within a day".     
+    The host_is_superhost variable column contains only TRUE or FALSE.     
+    The host_total_listings_count variable shows how many houses the host is operating in the Airbnb.    
+    The neighbourhood_cleansed variable shows the name of the neighbourhood where the house in. e.g: "Observatoire".    
+    
+After a glance of all variables, let's check distribution and properties of individual variables.    
+
+```{r price}
+#| echo: false
+#| warning: false
+#| message: false
+
+#Clean price characters
+airbnb_data_selected <-
+  airbnb_data_selected |>
+  mutate(
+    price = str_remove_all(price, "[\\$,]"),
+    price = as.integer(price)
+  )
+
+#Ensure specific range of rent price
+airbnb_data_selected |>
+  ggplot(aes(x = price)) +
+  geom_histogram(binwidth = 10) +
+  theme_classic() +
+  labs(
+    x = "Price per night",
+    y = "Number of properties"
+  )
+
+airbnb_data_selected |>
+  filter(price > 1000) |>
+  ggplot(aes(x = price)) +
+  geom_histogram(binwidth = 10) +
+  theme_classic() +
+  labs(
+    x = "Price per night",
+    y = "Number of properties"
+  ) +
+  scale_y_log10()
+```
+
+```{r price_2}
+#| echo: false
+#| warning: false
+#| message: false
+
+#shorten the range of renting price to 1000 dollars
+airbnb_data_selected |>
+  filter(price < 1000) |>
+  ggplot(aes(x = price)) +
+  geom_histogram(binwidth = 10) +
+  theme_classic() +
+  labs(
+    x = "Price per night",
+    y = "Number of properties"
+  )
+
+airbnb_data_selected |>
+  filter(price > 90) |>
+  filter(price < 210) |>
+  ggplot(aes(x = price)) +
+  geom_histogram(binwidth = 1) +
+  theme_classic() +
+  labs(
+    x = "Price per night",
+    y = "Number of properties"
+  )
+
+airbnb_data_less_1000 <-
+  airbnb_data_selected |>
+  filter(price < 1000)
+```
+
+It is obviously to see that lines are closely clustered on the far left of the axis. Most prices per night of Airbnb houses are set inside the range of 250 dollars.The price of Paris houses are seemly normally distributed inside the range. By shortening the range of price per night, we finally stop at the range from 90 dollars to 210 dollars. Interestingly, seen from the figure, hosts prefer to set rental prices in whole hundreds.    
+
+The we start to investigate the variable host_is_superhost. For further analysis, we need clean all the rows whose super_host column do not contain information (NA). Then for the convenience, we transfer results from TRUE/FALSE to binary number 1 and 0.
+
+After counting number of all reposnses in Average review score column, we can see it contains lots of NA.
+
+```{r cleaning}
+#| echo: false
+#| warning: false
+#| message: false
+
+airbnb_data_no_superhost_nas <-
+  airbnb_data_less_1000 |>
+  filter(!is.na(host_is_superhost)) |>
+  mutate(
+    host_is_superhost_binary =
+      as.numeric(host_is_superhost)
+  )
+
+airbnb_data_has_reviews <-
+  airbnb_data_no_superhost_nas |>
+  filter(!is.na(review_scores_rating))
+
+airbnb_data_has_reviews |>
+  count(host_response_time)
+
+airbnb_data_has_reviews <-
+  airbnb_data_has_reviews |>
+  mutate(
+    host_response_time = if_else(
+      host_response_time == "N/A",
+      NA_character_,
+      host_response_time
+    ),
+    host_response_time = factor(host_response_time)
+  )
+
+```
+
+The average review scores after cleaning NA is shown below, most comments concentrate on high scores.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+airbnb_data_has_reviews |>
+  filter(is.na(host_response_time)) |>
+  ggplot(aes(x = review_scores_rating)) +
+  geom_histogram(binwidth = 1) +
+  theme_classic() +
+  labs(
+    x = "Average review score",
+    y = "Number of properties"
+  )
+
+airbnb_data_has_reviews |>
+  ggplot(aes(
+    x = host_response_time,
+    y = review_scores_accuracy
+  )) +
+  geom_miss_point() +
+  labs(
+    x = "Host response time",
+    y = "Review score accuracy",
+    color = "Is missing?"
+  ) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+For the column host response time, NA are also exists, but the number of NA is small.
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+airbnb_data_selected <-
+  airbnb_data_has_reviews |>
+  filter(!is.na(host_response_time))
+
+airbnb_data_selected |>
+  ggplot(aes(x = host_total_listings_count)) +
+  geom_histogram() +
+  scale_x_log10() +
+  labs(
+    x = "Total number of listings, by host",
+    y = "Number of hosts"
+  )
+```
+As shown above, most hosts have only one house for renting in Airbnb. The number of hosts who own and rent out that amount of properties begins to plummet after reaching six or seven.
+
+
+\newpage
+
+After analysising individual variables, the next step is analysising the relationship between several variables.
+
+```{r super_fig}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: super_fig_1
+airbnb_data_selected |>
+  filter(number_of_reviews > 1) |>
+  ggplot(aes(x = price, y = review_scores_rating, 
+             color = host_is_superhost)) +
+  geom_point(size = 1, alpha = 0.1) +
+  theme_classic() +
+  labs(
+    x = "Price per night",
+    y = "Average review score",
+    color = "Superhost"
+  ) +
+  scale_color_brewer(palette = "Set1")
+```
+
+
+As shown on @super_fig_1, as price per night increases, trend of average review scores increases obviously and focus between 4 and 5, the blue points represent super host starts to take a higher percentage than red points ( not super host).
+
+Except these 2 variables(price per night and average scores review), host response time also correlated with whether a host is super host. From the data below, it is obvious to see that shorter the response time, more possible the host is a super host.
+
+```{r super_data}
+#| echo: false
+#| warning: false
+#| message: false
+
+airbnb_data_selected |>
+  tabyl(host_response_time, host_is_superhost) |>
+  adorn_percentages("col") |>
+  adorn_pct_formatting(digits = 0) |>
+  adorn_ns() |>
+  print(adorn_title())
+
+airbnb_data_selected |>
+  tabyl(neighbourhood_cleansed) |>
+  adorn_pct_formatting() |>
+  arrange(-n) |>
+  filter(n > 100) |>
+  adorn_totals("row") |>
+  print(head())
+```
+
+The last variable is neighbourhood, the Buttes-Montmartre is the neighbourhood has the most hosts, 10.5% hosts are in this neighbourhood. Popincourt follows the Buttes-Montmartre, its data is 8.7%. For neighbourhoods Temple and Passy, they have the least percentage of hosts, only 5.2% hosts came from each of them.
+
+
+Now, we want to predict whether a host can be a super host or not by using the variables we analysis before. As the result of being super host is expressed as binary number, we can use the glm model to approach the goal.
+
+The formula of glm model is:
+
+$$
+\text{Prob}(\text{Is superhost} = 1) = \text{logit}^{-1}(\beta_0 + \beta_1\text{Response time} + \beta_2\text{Reviews} + \epsilon)
+$$
+
+```{r model}
+#| echo: false
+#| warning: false
+#| message: false
+logistic_reg_superhost_response_review <-
+  glm(
+    host_is_superhost ~
+      host_response_time +
+      review_scores_rating,
+    data = airbnb_data_selected,
+    family = binomial
+  )
+modelsummary(logistic_reg_superhost_response_review)
+```
+
+The coefficiencies shown on the table illustrate that both of reponse time and review are positively correlated with probability of becoming a superhost, and the faster the host response, the more possible he/she will become a super host.
+
+```{r store}
+#| echo: false
+#| warning: false
+#| message: false
+write_parquet(
+  x = airbnb_data_selected, 
+  sink = "2023-12-12-paris-airbnblistings-analysis_dataset.parquet"
+  )
+```
+
+The last step is analysis is rewriting parquet file and store it again.
