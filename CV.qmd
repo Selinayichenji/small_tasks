@@ -1,7 +1,0 @@
----
-title: "CV"
-format: html
----
-
-<a href="index.pdf" target="_blank" class="btn">下载我的简历</a>
-

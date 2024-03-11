@@ -21,16 +21,43 @@ output: vitae::hyndman
 
 ```
 
+#Bio
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-library(vitae)
-library(tidyverse)
-tribble(
-  ~Degree, ~Year, ~Institution, ~Where,
-  "Bachelor's Degree", "2022~now", "University of Toronto(St.George Campus)", "Toronto, Canada",
-  "Bachelor's Degree", "2020~2022", "Queen's University", "Kingston, Canada"
-) %>%
-  detailed_entries(Degree, Year, Institution, Where)
+I am an undergraduate student at University of Toronto (St.George Campus), majoring in Economics with minors in Statistics and Mathematics, expanding my academic horizons within the realms of data and analysis. On campus, I am known as a pragmatist with an innovative spirit. My fascination with economics stems from a deep interest in the theories that govern our markets and a passion for applying these theories to real-world challenges. My choice of minors reflects my deep dive into the realm of data analytics, as I firmly believe in the indispensable role of precise analysis in today's decision-making and policy formulation.
 
-```
+By studying the fundamentals of both micro and macroeconomics, I have developed critical thinking and analytical capabilities, while my training in statistics and mathematics has deepened my quantitative research skills. I regularly engage in academic competitions and research projects outside of my coursework, which has not only bolstered my practical abilities but also enabled me to collaborate with peers from diverse backgrounds.
+
+Beyond the confines of the classroom, I actively participate in student organizations and volunteer initiatives, believing that these experiences shape a well-rounded character and foster leadership qualities. Looking ahead, I aspire to apply my knowledge and enthusiasm in the field of economic policy-making or financial analysis, contributing to the creation of a more equitable and prosperous society.
+
+In my downtime, I enjoy reading history books, drawing lessons from past economic systems and societal shifts. I am also passionate about traveling, as it allows me to directly experience and understand the economic frameworks of different cultures.
+
+If you are interested in my academic background or any collaborative opportunities, please feel free to reach out.
+
+# CV
+
+\newpage
+
+# Rohan Alexander
+
+**Assistant Professor, Information (51%) and Statistical Sciences (49%), University of Toronto**  
+Room 714, 140 St George St, Toronto, Ontario, M5S 3G6, Canada  
+Email: [rohan.alexander@utoronto.ca](mailto:rohan.alexander@utoronto.ca)  
+Website: [rohanalexander.com](https://rohanalexander.com)  
+LinkedIn: [RohanAlexander](https://www.linkedin.com/in/rohanalexander)  
+Twitter: [@rohanalexander](https://twitter.com/rohanalexander)
+
+## Academic appointments
+
+- **Assistant Professor, Information & Statistical Sciences, University of Toronto**  
+  _Jul 2020 - current_  
+  - Parental leave: From June to August 2021 I was on parental leave.
+  - COVID-19: From March to December 2020 I shared full-time childcare duties (0.5 FTE on average). From January 2021 to May 2021, and again from September to December 2021, I shared part-time childcare duties, (0.25 FTE on average).
+
+- **Assistant Director, Canadian Statistical Sciences Institute (CANSSI) Ontario**  
+  _Sep 2021 - current_  
+  - CANSSI Ontario has an annual operating budget of around \$1 million.  
+  - I support the director and three full-time staff to promote research in data science and statistics by providing funding and hosting events.
+  
+
+<a href="index.pdf" target="_blank" class="btn">"CV in PDF"</a>
+
