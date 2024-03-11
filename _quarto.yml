@@ -9,7 +9,7 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href:CV.qmd
+      - href: CV.qmd
         text: CV
 
 format:
