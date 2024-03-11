@@ -1,0 +1,36 @@
+---
+title: "Yichen Ji"
+name: Yichen Ji
+birthday: "2002-08-03"
+address: "Toronto"
+phone: "4162199488"
+email: "yic.ji@mail.utoronto.ca"
+linkedin: "LinkedIn"
+date: "`r format(Sys.time(), '%B %Y')`"
+output: vitae::hyndman
+---
+
+
+```{r}
+#install.packages("rmarkdown")
+#install.packages("vitae")
+#install.packages("tinytex")
+#tinytex::install_tinytex()
+
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(vitae)
+tribble(
+  ~Degree, ~Year, ~Institution, ~Where,
+  "Bachelor's Degree", "2022~now", "University of Toronto(St.George Campus)", "Toronto, Canada",
+  "Bachelor's Degree", "2020~2022", "Queen's University", "Kingston, Canada"
+) %>%
+  detailed_entries(Degree, Year, Institution, Where)
+
+cv_skills(
+  .list = c("Excel", "R", "Python")
+)
+```
