@@ -12,6 +12,8 @@ output: vitae::hyndman
 
 
 ```{r}
+#| echo: false
+#| eval: true
 #install.packages("rmarkdown")
 #install.packages("vitae")
 #install.packages("tinytex")
@@ -23,6 +25,7 @@ output: vitae::hyndman
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(vitae)
+library(tidyverse)
 tribble(
   ~Degree, ~Year, ~Institution, ~Where,
   "Bachelor's Degree", "2022~now", "University of Toronto(St.George Campus)", "Toronto, Canada",
@@ -30,7 +33,4 @@ tribble(
 ) %>%
   detailed_entries(Degree, Year, Institution, Where)
 
-cv_skills(
-  .list = c("Excel", "R", "Python")
-)
 ```

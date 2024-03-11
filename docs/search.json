@@ -2,8 +2,8 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "cv_website",
+    "title": "Yichen Ji",
     "section": "",
-    "text": "Name: Yichen Ji I am a student in university of toronto (st.George Campus). I majored in Economics and have 2 minors mathematics and statistics."
+    "text": "#install.packages(\"rmarkdown\")\n#install.packages(\"vitae\")\n#install.packages(\"tinytex\")\n#tinytex::install_tinytex()"
   }
 ]
