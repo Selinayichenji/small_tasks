@@ -10,17 +10,6 @@ date: "`r format(Sys.time(), '%B %Y')`"
 output: vitae::hyndman
 ---
 
-
-```{r}
-#| echo: false
-#| eval: true
-#install.packages("rmarkdown")
-#install.packages("vitae")
-#install.packages("tinytex")
-#tinytex::install_tinytex()
-
-```
-
 #Bio
 
 I am an undergraduate student at University of Toronto (St.George Campus), majoring in Economics with minors in Statistics and Mathematics, expanding my academic horizons within the realms of data and analysis. On campus, I am known as a pragmatist with an innovative spirit. My fascination with economics stems from a deep interest in the theories that govern our markets and a passion for applying these theories to real-world challenges. My choice of minors reflects my deep dive into the realm of data analytics, as I firmly believe in the indispensable role of precise analysis in today's decision-making and policy formulation.
